@@ -12,15 +12,19 @@ namespace PingerInfo.Core.Abstractions
     /// </summary>
     internal abstract class BaseMySqlPinger : BasePinger
     {
-        public BaseMySqlPinger(int period, int timeout, DbApplicationContext dbApplicationContext, ILogger<BaseMySqlPinger>? logger = null) : base(period, timeout)
+        public BaseMySqlPinger(int period, int timeout, DBConfiguration configuration,  ILogger<BaseMySqlPinger>? logger = null) : base(period, timeout)
         {
-            _dbApplicationContext = dbApplicationContext;
+            _configuration = configuration;
             _logger = logger;
             _logger?.Log(LogLevel.Information, "pinger initialized");
         }
 
+        /// <summary>
+        /// Данный метод создает экземпляр базы и пингует объекты, после чего вызывает метод DisposeAsync у базы.
+        /// </summary>
         protected override async Task UpdateAsync()
         {
+            _dbApplicationContext = new DbApplicationContext(_configuration);
             List<PingObject> pingObjects = await _dbApplicationContext.PingObjects.Where(elem => elem.Enabled).ToListAsync();
             using SemaphoreSlim semaphore = new SemaphoreSlim(Environment.ProcessorCount * 2);
 
@@ -40,10 +44,13 @@ namespace PingerInfo.Core.Abstractions
             }));
             await Task.WhenAll(tasks);
             await PingDoneAsync();
+            await _dbApplicationContext.DisposeAsync();
         }
 
-        protected readonly DbApplicationContext _dbApplicationContext;
+        protected DbApplicationContext _dbApplicationContext;
 
+        private readonly DBConfiguration _configuration;
+        
         protected readonly ILogger<BaseMySqlPinger>? _logger;
     }
 }

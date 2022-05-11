@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using PingerInfo.Core;
 using PingerInfo.Core.Abstractions;
 using PingerInfo.Core.DB;
@@ -13,7 +15,7 @@ namespace PingerInfo
             _dbConfiguration = DBConfiguration.LoadConfiguration("config.json");
             _pingers = new List<BasePinger>();
             _pingers.Add(
-                new MySqlPinger(5000, 500, new DbApplicationContext(_dbConfiguration),
+                new MySqlPinger(5000, 500, _dbConfiguration,
                 new Logger<MySqlPinger>(LoggerFactory.Create(builder => { builder.AddConsole(); })))
             );
 

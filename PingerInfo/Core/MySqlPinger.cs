@@ -3,6 +3,7 @@ using PingerInfo.Core.Abstractions;
 using PingerInfo.Core.DB;
 using PingerInfo.Core.DB.Model;
 using System.Net.NetworkInformation;
+using Microsoft.EntityFrameworkCore;
 
 namespace PingerInfo.Core
 {
@@ -11,7 +12,7 @@ namespace PingerInfo.Core
     /// </summary>
     internal class MySqlPinger : BaseMySqlPinger
     {
-        public MySqlPinger(int period, int timeout, DbApplicationContext dbApplicationContext, ILogger<BaseMySqlPinger>? logger = null) : base(period, timeout, dbApplicationContext, logger) {}
+        public MySqlPinger(int period, int timeout, DBConfiguration configuration, ILogger<BaseMySqlPinger>? logger = null) : base(period, timeout, configuration, logger) {}
 
         protected override async Task ReceivePacketAsync(PingObject pingObject, PingReply pingReply)
         {

@@ -3,6 +3,7 @@ using PingerInfo.Core.Abstractions;
 using PingerInfo.Core.DB;
 using PingerInfo.Core.DB.Model;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using PingerInfo.Core.Json;
 
 public class JsonPinger : BaseJsonPinger
