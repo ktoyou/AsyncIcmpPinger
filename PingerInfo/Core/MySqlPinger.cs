@@ -37,11 +37,12 @@ namespace PingerInfo.Core
                 var eventId = $"{elem.ID}_device-down";
                 var e = _dbApplicationContext.Events.Where(elem => elem.EventID.Equals(eventId)).FirstOrDefault();
 
-                if (elem.Online && e != null) _dbApplicationContext.Events.Remove(e);
-                else
+                switch (elem.Online)
                 {
-                    if (e == null)
-                    {
+                    case true when e != null:
+                        _dbApplicationContext.Events.Remove(e);
+                        break;
+                    case false when e == null:
                         _dbApplicationContext.Events.Add(new Event()
                         {
                             Message = $"Девайс с именем {elem.Title} недоступен. ID девайса - {elem.ID}",
@@ -49,8 +50,10 @@ namespace PingerInfo.Core
                             Level = 4,
                             EventID = eventId
                         });
-                    }
-                    else e.Begin = (int) DateTimeOffset.Now.ToUnixTimeSeconds() + 3600 * 3;
+                        break;
+                    case false:
+                        e.Begin = (int) DateTimeOffset.Now.ToUnixTimeSeconds() + 3600 * 3;
+                        break;
                 }
             });
             
