@@ -31,6 +31,18 @@ CREATE TABLE ping_objects (
 ) ENGINE=InnoDB;
 ```
 
+```mysql
+CREATE TABLE events (
+    id INT NOT NULL AUTO_INCREMENT,
+    level INT NOT NULL,
+    event_id VARCHAR(64) NOT NULL,
+    message TEXT NOT NULL,
+    begin INT NOT NULL,
+    end INT NOT NULL,
+    PRIMARY KEY(id)
+);
+```
+
 id - уникальный идентификатор объекта
 
 address - ip адресс объекта
