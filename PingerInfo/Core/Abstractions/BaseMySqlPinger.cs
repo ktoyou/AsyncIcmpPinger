@@ -43,7 +43,7 @@ namespace PingerInfo.Core.Abstractions
                 }
             }));
             await Task.WhenAll(tasks);
-            await PingDoneAsync();
+            await PingDoneAsync(pingObjects);
             await _dbApplicationContext.DisposeAsync();
         }
 

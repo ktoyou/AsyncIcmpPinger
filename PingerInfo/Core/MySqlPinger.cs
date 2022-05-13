@@ -21,6 +21,7 @@ namespace PingerInfo.Core
                 case IPStatus.Success:
                     pingObject.Online = true;
                     _logger?.Log(LogLevel.Information, $"object {pingObject.Address} online. ID={pingObject.ID}");
+                    
                     break;
                 default:
                     pingObject.Online = false;
@@ -29,10 +30,34 @@ namespace PingerInfo.Core
             }
         }
 
-        protected override async Task PingDoneAsync()
+        protected override async Task PingDoneAsync(List<PingObject> pingObjects)
         {
+            pingObjects.ForEach(elem =>
+            {
+                var eventId = $"{elem.ID}_device-down";
+                var e = _dbApplicationContext.Events.Where(elem => elem.EventID.Equals(eventId)).FirstOrDefault();
+
+                if (elem.Online && e != null) _dbApplicationContext.Events.Remove(e);
+                else
+                {
+                    if (e == null)
+                    {
+                        _dbApplicationContext.Events.Add(new Event()
+                        {
+                            Message = $"Девайс с именем {elem.Title} недоступен. ID девайса - {elem.ID}",
+                            Begin = (int) DateTimeOffset.Now.ToUnixTimeSeconds() + 3600 * 3,
+                            Level = 4,
+                            EventID = eventId
+                        });
+                    }
+                    else e.Begin = (int) DateTimeOffset.Now.ToUnixTimeSeconds() + 3600 * 3;
+                }
+            });
+            
+            
             _logger?.Log(LogLevel.Information, "saving changes to database");
             await _dbApplicationContext.SaveChangesAsync();
         }
+        
     }
 }

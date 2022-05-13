@@ -35,7 +35,7 @@ namespace PingerInfo.Core.Abstractions
         /// <returns></returns>
         protected abstract Task UpdateAsync();
 
-        protected abstract Task PingDoneAsync();
+        protected abstract Task PingDoneAsync(List<PingObject> pingObjects);
 
         protected abstract Task ReceivePacketAsync(PingObject pingObject, PingReply pingReply);
     }

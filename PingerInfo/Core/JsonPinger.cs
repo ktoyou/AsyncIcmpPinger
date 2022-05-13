@@ -27,7 +27,7 @@ public class JsonPinger : BaseJsonPinger
         return Task.CompletedTask;
     }
 
-    protected override async Task PingDoneAsync()
+    protected override async Task PingDoneAsync(List<PingObject> pingObjects)
     {
         _logger?.Log(LogLevel.Information, "saving changes to json file");
         await SwitchesJsonLoader.SavePingObjectsAsync(_filename, _pingObjects);

@@ -13,13 +13,13 @@ namespace PingerInfo.Core.Abstractions
     {
         protected BaseJsonPinger(int period, int timeout, string filename, ILogger<BaseJsonPinger>? logger) : base(period, timeout)
         {
-            _pingObjects = new List<PingObject>(SwitchesJsonLoader.GetPingObjects(filename));
             _logger = logger;
             _filename = filename;
         }
 
         protected override async Task UpdateAsync()
         {
+            _pingObjects = new List<PingObject>(SwitchesJsonLoader.GetPingObjects(_filename));
             SemaphoreSlim semaphore = new SemaphoreSlim(Environment.ProcessorCount * 2);
         
             var tasks = _pingObjects.Select(async item =>
@@ -38,6 +38,7 @@ namespace PingerInfo.Core.Abstractions
             });
         
             await Task.WhenAll(tasks);
+            await PingDoneAsync(_pingObjects);
         }
 
         protected List<PingObject> _pingObjects;

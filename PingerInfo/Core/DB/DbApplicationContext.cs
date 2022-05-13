@@ -14,6 +14,8 @@ namespace PingerInfo.Core.DB
         /// </summary>
         public DbSet<PingObject> PingObjects { get; set; }
 
+        public DbSet<Event> Events { get; set; }
+
         /// <summary>
         /// Конфигурация для подключения к базе данных
         /// </summary>
